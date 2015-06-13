@@ -23,11 +23,18 @@ object MyBuild extends Build {
     file("."),
     settings = buildSettings ++ Seq(
       scalacOptions := Seq("-deprecation"),
-      run <<= run in Compile in core
+      run <<= run in Compile in test
     )
-  ) aggregate(macros, core)
+  ) aggregate(grapher, test)
 
-  lazy val macros: Project = Project(
+  lazy val defmacro: Project = Project(
+    "defmacro", 
+    file("defmacro"),
+    settings = buildSettings ++ Seq(
+      libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-compiler" % _))
+  )
+
+  lazy val grapher: Project = Project(
     "grapher",
     file("grapher"),
     settings = buildSettings ++ Seq(
@@ -38,11 +45,11 @@ object MyBuild extends Build {
         else Nil
       )
     )
-  )
+  ) dependsOn(defmacro)
 
-  lazy val core: Project = Project(
-    "core",
-    file("core"),
+  lazy val test: Project = Project(
+    "test",
+    file("test"),
     settings = buildSettings ++ Seq(libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.12", scalacOptions := Seq("-deprecation"))
-  ) dependsOn(macros)
+  ) dependsOn(grapher)
 }

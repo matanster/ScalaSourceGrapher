@@ -26,28 +26,37 @@ object analyze {
     }
     
     val returnIdentity = c.Expr[Any](Block(annottees.map(_.tree).toList, Literal(Constant(())))) // return expression that duplicates the original annottees (from https://github.com/scalamacros/paradise/blob/5e5f0c129dd1861f86250d7ce94635b89996938c/tests/src/main/scala/identity.scala#L8)
+
+    def methodDo(expr: c.universe.Tree) = {
+      // for each expression of a found method, examines all of the method applications employed by it,
+      // to extract its callees.
+      expr.foreach { 
+        // TODO: need to further hone the quasiquote for capturing only and all cases of method application, *along* the object they are applied to.
+        case q"$obj $f" => println(s"  which calls " + BLUE + BOLD + f + RESET + 
+                                    " on object " + obj + 
+                                    " of type " + CYAN_B + obj.tpe.typeSymbol + RESET)
+                                    // if (obj.tpe != null) println(CYAN_B + obj.tpe.typeSymbol + RESET)
+        case x => // println(YELLOW + s"in unmatched AST part: $x" + RESET); 
+                  // case q"$obj $f($args)" => println(s"  which calls $f with args $args")
+      }
+    }
     
     // iterate all methods of an object
     def findMethods(typ: String, name: Any, body: List[c.Tree]) = {
       body map {
-        case q"$mods def $tname[..$tparams](...$paramss): $tpt = $expr" =>
+        case x@q"$mods def $tname[..$tparams](...$paramss): $tpt = $expr" => {
           println(CYAN_B + s"$typ $name" + RESET + 
                   " has method " + BLUE + BOLD + 
                   tname + RESET)
-          
-          // for each expression of a found method, examines all of the method applications employed by it,
-          // to extract its callees.
-          expr.foreach { 
-            // TODO: need to further hone the quasiquote for capturing only and all cases of method application, *along* the object they are applied to.
-            case q"$obj $f" => println(s"  which calls " + BLUE + BOLD + f + RESET + 
-                                        " on object " + obj + 
-                                        " of type " + CYAN_B + obj.tpe.typeSymbol + RESET)
-                                        // if (obj.tpe != null) println(CYAN_B + obj.tpe.typeSymbol + RESET)
-            case x => // println(YELLOW + s"in unmatched AST part: $x" + RESET); 
-                      // case q"$obj $f($args)" => println(s"  which calls $f with args $args")
-          } 
-        case x => // println(YELLOW + s"in unmatched AST part: $x" + RESET);  
-      }     
+
+          Macros.printff
+          //val defMacroWrapped = q"$mods def $tname[..$tparams](...$paramss): $tpt = $expr"
+          //println("wrapped: \n" + defMacroWrapped)
+          //methodDo(expr)
+        }
+        case x => // println(YELLOW + s"in unmatched AST part: $x" + RESET);
+      }
+      
     }
     
     def typeCheck(annottees: c.Expr[Any]*) = {
