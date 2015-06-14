@@ -27,6 +27,7 @@ object analyze {
     
     val returnIdentity = c.Expr[Any](Block(annottees.map(_.tree).toList, Literal(Constant(())))) // return expression that duplicates the original annottees (from https://github.com/scalamacros/paradise/blob/5e5f0c129dd1861f86250d7ce94635b89996938c/tests/src/main/scala/identity.scala#L8)
 
+    @deprecated("moved to the defMacro phase now", "")
     def methodDo(expr: c.universe.Tree) = {
       // for each expression of a found method, examines all of the method applications employed by it,
       // to extract its callees.
@@ -56,8 +57,15 @@ object analyze {
           //Macros.printff
           //val defMacroWrapped = q"$mods def $tname[..$tparams](...$paramss): $tpt = $expr"
           //println("wrapped: \n" + defMacroWrapped)
-          //methodDo(expr) 
-          q"$mods def $tname[..$tparams](...$paramss): $tpt = macro $expr"
+          //methodDo(expr)
+          
+          //
+          // replace the method with a macro that gets the method's AST as its argument.
+          // why? this macro will analyze its code during its expansion, having type information automatically available to it.
+          // after the macro analyzes the code, it will re-expand the method's AST so that it runs as intended.
+          //
+          import grapher.Macros._
+          q"$mods def $tname[..$tparams](...$paramss): $tpt = defMacro($expr)"
           
           //x
         }

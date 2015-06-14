@@ -1,4 +1,5 @@
 import grapher.NN
+import grapher.Macros._
 import scala.concurrent.Future
 
 object Test extends App {
@@ -55,9 +56,10 @@ case class A() {
     val b = new B
     b.doB
     val tagString = tags.map(tag => "[" + getObjectName(tag) + "]").mkString(" ")
-    messageType match {
+    return messageType match {
       case Normal => WHITE + tagString + RESET + " " + BLUE + BOLD + msg + RESET  
       case Error  => WHITE + tagString + " " + RESET + RED_B + WHITE + " Error " + RESET + " " + RED + msg + RESET // + " " + RED_B + WHITE + BOLD + " ERROR "
+      case _ => " "
     }
   }
 }

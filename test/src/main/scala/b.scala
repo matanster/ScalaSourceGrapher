@@ -1,4 +1,5 @@
 import grapher.NN
+import grapher.Macros._
 
 @NN case class TestCaseClass(foo: String)
 
