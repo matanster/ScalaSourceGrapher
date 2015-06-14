@@ -1,3 +1,11 @@
+/*
+ * This is phase 0 - the macro annotations phase.
+ * In this phase, macro annotations embed a regular macro 
+ * in place of every annotated method call.
+ * 
+ * This phase also outputs all detected class and object definitions. 
+ */
+
 package grapher
 
 import scala.annotation.StaticAnnotation
@@ -5,7 +13,7 @@ import scala.language.experimental.macros
 import scala.reflect.macros.whitebox
 
 // bind the annotation macro
-class NN extends StaticAnnotation {
+class AN extends StaticAnnotation {
   def macroTransform(annottees: Any*) : Any = macro analyze.impl
 }
 
@@ -43,7 +51,7 @@ object analyze {
           import grapher.Macros._
           q"$mods def $tname[..$tparams](...$paramss): $tpt = defMacro($expr)"
         }
-        case x => x // println(YELLOW + s"in unmatched AST part: $x" + RESET);
+        case x => x
       }
       wrapped
     }

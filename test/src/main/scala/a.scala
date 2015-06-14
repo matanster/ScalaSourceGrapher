@@ -1,5 +1,13 @@
-import grapher.NN
+/*
+ * This is a source file that is annotated
+ * to extract call graph information from it
+ * 
+ * The following two imports are required for the annotations to ultimately work  
+ */
+
+import grapher.AN
 import grapher.Macros._
+
 import scala.concurrent.Future
 
 object Test extends App {
@@ -44,9 +52,9 @@ case class A() {
   def doA = { println("A"); 3 }
 }
 
-@NN case class TestCaseClass2(foo: String) 
+@AN case class TestCaseClass2(foo: String) 
 
-@NN object DefaultExpander extends Expander {
+@AN object DefaultExpander extends Expander {
   def foo = { val a = 3 }
   def apply(msg: String, tags: Seq[logTag], messageType: MessageType) : String = {
     import Console._
@@ -64,9 +72,9 @@ case class A() {
   }
 }
 
-@NN object Foo { println("object foo has initializedddd" ) }
+@AN object Foo { println("object foo has initializedddd" ) }
 
-abstract class UnderlyingExternalLogger {
+@AN abstract class UnderlyingExternalLogger {
   def apply(finalMessage: String, messageType: MessageType) 
 }
 

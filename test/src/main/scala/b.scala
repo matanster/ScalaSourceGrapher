@@ -1,9 +1,16 @@
-import grapher.NN
+/*
+ * This is a source file that is annotated
+ * to extract call graph information from it
+ * 
+ * The following two imports are required for the annotations to ultimately work  
+ */
+
+import grapher.AN
 import grapher.Macros._
 
-@NN case class TestCaseClass(foo: String)
+@AN case class TestCaseClass(foo: String)
 
-@NN class B {
+@AN class B {
   def doB = { 
     println("method doB of class B has runnnn")
     3 
@@ -12,6 +19,7 @@ import grapher.Macros._
   doB
 }
 
+@AN 
 class B1 {
   def doB = { 3 }
 }

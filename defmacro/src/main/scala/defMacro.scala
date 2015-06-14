@@ -1,3 +1,8 @@
+/*
+ * This is phase 1 - this macro definition takes care of 
+ * outputing all method calls made by every method.
+ */
+
 package grapher
 
 import scala.language.experimental.macros
