@@ -42,21 +42,29 @@ object analyze {
     }
     
     // iterate all methods of an object
-    def findMethods(typ: String, name: Any, body: List[c.Tree]) = {
-      body map {
+    def findMethods(typ: String, name: Any, body: List[c.Tree]): List[c.Tree] = {
+      val wrapped: List[c.Tree] = body map {
         case x@q"$mods def $tname[..$tparams](...$paramss): $tpt = $expr" => {
           println(CYAN_B + s"$typ $name" + RESET + 
                   " has method " + BLUE + BOLD + 
                   tname + RESET)
+          val body: c.Tree = expr
+          //println(body)
 
-          Macros.printff
+          //println(reify {q"$mods def $tname[..$tparams](...$paramss): $tpt = macro $expr"})
+                
+          //Macros.printff
           //val defMacroWrapped = q"$mods def $tname[..$tparams](...$paramss): $tpt = $expr"
           //println("wrapped: \n" + defMacroWrapped)
-          //methodDo(expr)
+          //methodDo(expr) 
+          q"$mods def $tname[..$tparams](...$paramss): $tpt = macro $expr"
+          
+          //x
         }
-        case x => // println(YELLOW + s"in unmatched AST part: $x" + RESET);
+        case x => x // println(YELLOW + s"in unmatched AST part: $x" + RESET);
       }
-      
+      //println(wrapped)
+      wrapped
     }
     
     def typeCheck(annottees: c.Expr[Any]*) = {
@@ -76,15 +84,18 @@ object analyze {
       
       case x@q"$mods object $name extends { ..$earlydefns } with ..$parents { $self => ..$body }" :: Nil =>
         println(s"found object $name")
-        findMethods("object", name, body)
-        returnIdentity
+        val wrappedMethods = findMethods("object", name, body)
+        //println(reify {wrappedMethods})
+        c.Expr[Any](q"$mods object $name extends { ..$earlydefns } with ..$parents { $self => ..$wrappedMethods }")
+        //returnIdentity
         
       //case (classDecl: ClassDef) :: Nil => modifiedDeclaration(classDecl)        
         
       case x@q"$mods class $name[..$tparams] $ctorMods(...$paramss) extends { ..$earlydefns } with ..$parents { $self => ..$body }" :: Nil => 
         println(s"found class $name")
-        findMethods("class", name, body)
-        returnIdentity
+        val wrappedMethods = findMethods("class", name, body)
+        c.Expr[Any](q"$mods class $name[..$tparams] $ctorMods(...$paramss) extends { ..$earlydefns } with ..$parents { $self => ..$wrappedMethods }")
+        //returnIdentity
           
       case x@q"import $ref.{..$sels}" => 
         println(s"found import $ref $sels")

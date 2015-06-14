@@ -2,6 +2,8 @@ import grapher.NN
 import scala.concurrent.Future
 
 object Test extends App {
+  val b = new B
+  val foo = Foo
 }
 
 abstract class logTag 
@@ -41,7 +43,7 @@ case class A() {
   def doA = { println("A"); 3 }
 }
 
-@NN case class TestCaseClass2(foo: String)
+@NN case class TestCaseClass2(foo: String) 
 
 @NN object DefaultExpander extends Expander {
   def foo = { val a = 3 }
@@ -60,7 +62,7 @@ case class A() {
   }
 }
 
-@NN object Foo 
+@NN object Foo { println("object foo has initializedddd" ) }
 
 abstract class UnderlyingExternalLogger {
   def apply(finalMessage: String, messageType: MessageType) 
