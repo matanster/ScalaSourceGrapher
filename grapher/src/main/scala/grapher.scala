@@ -27,21 +27,6 @@ object analyze {
     
     val returnIdentity = c.Expr[Any](Block(annottees.map(_.tree).toList, Literal(Constant(())))) // return expression that duplicates the original annottees (from https://github.com/scalamacros/paradise/blob/5e5f0c129dd1861f86250d7ce94635b89996938c/tests/src/main/scala/identity.scala#L8)
 
-    @deprecated("moved to the defMacro phase now", "")
-    def methodDo(expr: c.universe.Tree) = {
-      // for each expression of a found method, examines all of the method applications employed by it,
-      // to extract its callees.
-      expr.foreach { 
-        // TODO: need to further hone the quasiquote for capturing only and all cases of method application, *along* the object they are applied to.
-        case q"$obj $f" => println(s"  which calls " + BLUE + BOLD + f + RESET + 
-                                    " on object " + obj + 
-                                    " of type " + CYAN_B + obj.tpe.typeSymbol + RESET)
-                                    // if (obj.tpe != null) println(CYAN_B + obj.tpe.typeSymbol + RESET)
-        case x => // println(YELLOW + s"in unmatched AST part: $x" + RESET); 
-                  // case q"$obj $f($args)" => println(s"  which calls $f with args $args")
-      }
-    }
-    
     // iterate all methods of an object
     def findMethods(typ: String, name: Any, body: List[c.Tree]): List[c.Tree] = {
       val wrapped: List[c.Tree] = body map {
@@ -49,16 +34,7 @@ object analyze {
           println(CYAN_B + s"$typ $name" + RESET + 
                   " has method " + BLUE + BOLD + 
                   tname + RESET)
-          val body: c.Tree = expr
-          //println(body)
-
-          //println(reify {q"$mods def $tname[..$tparams](...$paramss): $tpt = macro $expr"})
-                
-          //Macros.printff
-          //val defMacroWrapped = q"$mods def $tname[..$tparams](...$paramss): $tpt = $expr"
-          //println("wrapped: \n" + defMacroWrapped)
-          //methodDo(expr)
-          
+         
           //
           // replace the method with a macro that gets the method's AST as its argument.
           // why? this macro will analyze its code during its expansion, having type information automatically available to it.
@@ -66,26 +42,11 @@ object analyze {
           //
           import grapher.Macros._
           q"$mods def $tname[..$tparams](...$paramss): $tpt = defMacro($expr)"
-          
-          //x
         }
         case x => x // println(YELLOW + s"in unmatched AST part: $x" + RESET);
       }
-      //println(wrapped)
       wrapped
     }
-    
-    def typeCheck(annottees: c.Expr[Any]*) = {
-      // add type information to the annottees
-      println(GREEN + "about to typecheck" + RESET)
-      val typeCheckedAnnottees = annottees.map(annottee => c.typecheck(annottee.tree, silent = false)).toList 
-      println(GREEN_B + "typechecking didn't crash this time!" + RESET)
-      typeCheckedAnnottees
-    }
-    
-    //val typeCheckedAnnottees = typeCheck(annottees.head)
-   
-    //annottees.map(_.tree).toList match {
     
     // iterate the annottees to find and handle all methods    
     annottees.map(_.tree).toList match {
@@ -93,17 +54,12 @@ object analyze {
       case x@q"$mods object $name extends { ..$earlydefns } with ..$parents { $self => ..$body }" :: Nil =>
         println(s"found object $name")
         val wrappedMethods = findMethods("object", name, body)
-        //println(reify {wrappedMethods})
         c.Expr[Any](q"$mods object $name extends { ..$earlydefns } with ..$parents { $self => ..$wrappedMethods }")
-        //returnIdentity
-        
-      //case (classDecl: ClassDef) :: Nil => modifiedDeclaration(classDecl)        
         
       case x@q"$mods class $name[..$tparams] $ctorMods(...$paramss) extends { ..$earlydefns } with ..$parents { $self => ..$body }" :: Nil => 
         println(s"found class $name")
         val wrappedMethods = findMethods("class", name, body)
         c.Expr[Any](q"$mods class $name[..$tparams] $ctorMods(...$paramss) extends { ..$earlydefns } with ..$parents { $self => ..$wrappedMethods }")
-        //returnIdentity
           
       case x@q"import $ref.{..$sels}" => 
         println(s"found import $ref $sels")
@@ -113,8 +69,5 @@ object analyze {
         println(YELLOW + "in unmatched AST part" + RESET); q"..$x"
         returnIdentity
     }
-    
-    //annottees.head
-    //c.Expr[Any](result)
   }
 }

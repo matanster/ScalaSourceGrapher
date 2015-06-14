@@ -15,19 +15,14 @@ object Macros {
         case x@q"$obj $f" => println(s"  which calls " + BLUE + BOLD + f + RESET + 
                                     " on object " + obj + 
                                     " of type " + CYAN_B + obj.tpe.typeSymbol + RESET)
-                                    // if (obj.tpe != null) println(CYAN_B + obj.tpe.typeSymbol + RESET)
         case x => 
-                  // println(YELLOW + s"in unmatched AST part: $x" + RESET); 
-                  // case q"$obj $f($args)" => println(s"  which calls $f with args $args")
       }
     }
   
   def impl(c: whitebox.Context)(annottees: c.universe.Tree*): c.universe.Tree = {
     import c.universe._
-    methodDo(c)(annottees.head) // TODO: this transition from varargs to single tree is probably not a good idea
-    //println(annottees.head)
+    methodDo(c)(annottees.head) // TODO: this transition from varargs to a single tree still baffles me
     annottees.head
-    //c.Expr[Unit](q"""println("def macro has been expanded")""")
   }
 
   def defMacro(annottees: Any*): Any = macro impl
