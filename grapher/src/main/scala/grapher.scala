@@ -1,7 +1,8 @@
 /*
- * This is phase 0 - the macro annotations phase.
+ * This code compiles first (courtesy of the sbt definitions...)
+ * 
  * In this phase, macro annotations embed a regular macro 
- * in place of every annotated method call.
+ * in place of every annotated method call of the project being built.
  * 
  * This phase also outputs all detected class and object definitions. 
  */

@@ -1,6 +1,7 @@
 /*
- * This is phase 1 - this macro definition takes care of 
- * outputing all method calls made by every method.
+ * this macro definition takes care of 
+ * outputing all method calls made by every method of a class.
+ * it gets embedded by the static annotation. 
  */
 
 package grapher

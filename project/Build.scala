@@ -25,7 +25,7 @@ object MyBuild extends Build {
       scalacOptions := Seq("-deprecation"),
       run <<= run in Compile in test
     )
-  ) aggregate(grapher, test)
+  ) aggregate(grapher)
 
   lazy val defmacro: Project = Project(
     "defmacro", 
