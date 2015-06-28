@@ -36,8 +36,8 @@ object analyze {
     
     val returnIdentity = c.Expr[Any](Block(annottees.map(_.tree).toList, Literal(Constant(())))) // return expression that duplicates the original annottees (from https://github.com/scalamacros/paradise/blob/5e5f0c129dd1861f86250d7ce94635b89996938c/tests/src/main/scala/identity.scala#L8)
 
-    // iterate all methods of an object
-    def findMethods(typ: String, name: Any, body: List[c.Tree]): List[c.Tree] = {
+    // augment input AST with method wrappers
+    def wrapMethods(typ: String, name: Any, body: List[c.Tree]): List[c.Tree] = {
       val wrapped: List[c.Tree] = body map {
         case x@q"$mods def $tname[..$tparams](...$paramss): $tpt = $expr" => {
           println(CYAN_B + s"$typ $name" + RESET + 
@@ -62,12 +62,12 @@ object analyze {
       
       case x@q"$mods object $name extends { ..$earlydefns } with ..$parents { $self => ..$body }" :: Nil =>
         println(s"found object $name")
-        val wrappedMethods = findMethods("object", name, body)
+        val wrappedMethods = wrapMethods("object", name, body)
         c.Expr[Any](q"$mods object $name extends { ..$earlydefns } with ..$parents { $self => ..$wrappedMethods }")
         
       case x@q"$mods class $name[..$tparams] $ctorMods(...$paramss) extends { ..$earlydefns } with ..$parents { $self => ..$body }" :: Nil => 
         println(s"found class $name")
-        val wrappedMethods = findMethods("class", name, body)
+        val wrappedMethods = wrapMethods("class", name, body)
         c.Expr[Any](q"$mods class $name[..$tparams] $ctorMods(...$paramss) extends { ..$earlydefns } with ..$parents { $self => ..$wrappedMethods }")
           
       case x@q"import $ref.{..$sels}" => 
