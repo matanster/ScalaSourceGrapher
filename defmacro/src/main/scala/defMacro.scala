@@ -11,7 +11,7 @@ import scala.reflect.macros.whitebox
 
 object Macros {
   
-   def methodDo(c: whitebox.Context)(expr: c.universe.Tree) = {
+   def recordAndExecuteMethod(c: whitebox.Context)(expr: c.universe.Tree) = {
       import c.universe._
       import Console._
       // for each expression of a found method, examines all of the method applications employed by it,
@@ -27,9 +27,9 @@ object Macros {
   
   def impl(c: whitebox.Context)(annottees: c.universe.Tree*): c.universe.Tree = {
     import c.universe._
-    methodDo(c)(annottees.head) // TODO: this transition from varargs to a single tree still baffles me
+    recordAndExecuteMethod(c)(annottees.head) // TODO: this transition from varargs to a single tree still baffles me
     annottees.head
   }
 
-  def defMacro(annottees: Any*): Any = macro impl
+  def macroWrapper(annottees: Any*): Any = macro impl
 }

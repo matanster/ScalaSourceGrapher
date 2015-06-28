@@ -50,7 +50,7 @@ object analyze {
           // after the macro analyzes the code, it will re-expand the method's AST so that it runs as intended.
           //
           import grapher.Macros._
-          q"$mods def $tname[..$tparams](...$paramss): $tpt = defMacro($expr)"
+          q"$mods def $tname[..$tparams](...$paramss): $tpt = macroWrapper($expr)"
         }
         case x => x
       }
