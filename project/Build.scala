@@ -31,7 +31,8 @@ object MyBuild extends Build {
     "defmacro", 
     file("defmacro"),
     settings = buildSettings ++ Seq(
-      libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-compiler" % _))
+      libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-compiler" % _),
+      libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.1")
   )
 
   lazy val grapher: Project = Project(
@@ -43,7 +44,8 @@ object MyBuild extends Build {
       libraryDependencies ++= (
         if (scalaVersion.value.startsWith("2.10")) List("org.scalamacros" %% "quasiquotes" % paradiseVersion)
         else Nil
-      )
+      ),
+      libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.1"
     )
   ) dependsOn(defmacro)
 
