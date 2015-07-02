@@ -62,41 +62,7 @@ object analyze {
           // after the macro analyzes the code, it will re-expand the method's AST so that it runs as intended.
           //
 
-          //println(paramss)
-          
           val nameAsString = name.toString
-          
-          //val addedParamGroup = List(q"val typeName: String = $nameAsString")
-          //println(addedParamGroup)
-          /*
-          val augmentedParamList = paramss :+ addedParamGroup
-          println(augmentedParamList)
-          println()
-          */
-          
-          
-          println(nameAsString)
-          println(tname)
-          //println(expr)
-          
-          /*
-          val augmentedExpr = expr.isEmpty match
-          {
-            case true  => expr
-            case false => val q"..$statements" = expr
-                          val newStatement = q"val typeName: String = $nameAsString"
-                          expr 
-          }
-          println(augmentedExpr)
-          */
-
-          
-          //val nameAsDefAST = q"val typeName: String = $nameAsString"
-          //val nameAsAST = q"$nameAsString"
-          //println(nameAsAST)
-          println()
-          //val nameAsExpr = reify { nameAsString }
-          //println(nameAsExpr)
           
           import grapher.Macros._
           q"$mods def $tname[..$tparams](...$paramss): $tpt = macroWrapper($nameAsString, $expr)"
