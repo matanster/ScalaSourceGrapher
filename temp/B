@@ -1,0 +1,5 @@
+{
+  "name" : "B",
+  "type" : "class",
+  "methods" : [ "doB" ]
+}

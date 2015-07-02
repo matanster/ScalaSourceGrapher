@@ -7,10 +7,8 @@
   <classpathentry kind="src" path="src/test/scala"/>
   <classpathentry kind="src" path="src/test/java"/>
   <classpathentry kind="src" path="src/test/resources"/>
-  <classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_COMPILER_CONTAINER"/>
   <classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"/>
-  <classpathentry kind="lib" path="/home/matan/.ivy2/cache/org.scala-lang.modules/scala-xml_2.11/bundles/scala-xml_2.11-1.0.3.jar"/>
-  <classpathentry kind="lib" path="/home/matan/.ivy2/cache/org.scala-lang.modules/scala-parser-combinators_2.11/bundles/scala-parser-combinators_2.11-1.0.3.jar"/>
+  <classpathentry kind="lib" path="/home/matan/.ivy2/cache/org.slf4j/slf4j-api/jars/slf4j-api-1.7.12.jar"/>
   <classpathentry kind="lib" path="/home/matan/.ivy2/cache/com.typesafe.play/play-json_2.11/jars/play-json_2.11-2.4.1.jar"/>
   <classpathentry kind="lib" path="/home/matan/.ivy2/cache/com.typesafe.play/play-iteratees_2.11/jars/play-iteratees_2.11-2.4.1.jar"/>
   <classpathentry kind="lib" path="/home/matan/.ivy2/cache/org.scala-stm/scala-stm_2.11/jars/scala-stm_2.11-0.7.jar"/>

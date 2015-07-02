@@ -1,0 +1,5 @@
+{
+  "name" : "UnderlyingExternalLogger",
+  "type" : "class",
+  "methods" : [ "apply" ]
+}

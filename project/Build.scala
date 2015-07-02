@@ -18,21 +18,48 @@ object BuildSettings {
 object MyBuild extends Build {
   import BuildSettings._
 
+  //
+  // 
+  //
+  val cleanOutputData = taskKey[Unit]("cleanTemp")
+
   lazy val root: Project = Project(
     "root",
     file("."),
     settings = buildSettings ++ Seq(
       scalacOptions := Seq("-deprecation"),
-      run <<= run in Compile in test
+      run <<= run in Compile in test,
+      compile in Compile <<= (compile in Compile).dependsOn(Def.task { 
+        // somehow this doesn't get executed here, only in a subproject
+        println("About to extract call graph while compiling...") 
+      }),
+      cleanOutputData := {
+        println("Running task that does nothing...")
+      }
     )
   ) aggregate(grapher)
+
+  lazy val util: Project = Project(
+    "util",
+    file("util"),
+    settings = buildSettings ++ Seq(
+        libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.12", scalacOptions := Seq("-deprecation"),
+        libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.1",
+        libraryDependencies += "org.apache.commons" % "commons-io" % "1.3.2",
+        name         := "util",
+        organization := "articlio",
+        version      := "0.1-SNAPSHOT"
+      )
+  ) 
 
   lazy val defmacro: Project = Project(
     "defmacro", 
     file("defmacro"),
     settings = buildSettings ++ Seq(
       libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-compiler" % _),
-      libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.1")
+      libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.1",
+      libraryDependencies += "org.apache.commons" % "commons-io" % "1.3.2"
+    )
   )
 
   lazy val grapher: Project = Project(
@@ -47,11 +74,16 @@ object MyBuild extends Build {
       ),
       libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.1"
     )
-  ) dependsOn(defmacro)
+  ) dependsOn(util, defmacro)
 
   lazy val test: Project = Project(
     "test",
     file("test"),
-    settings = buildSettings ++ Seq(libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.12", scalacOptions := Seq("-deprecation"))
-  ) dependsOn(grapher)
+    settings = buildSettings ++ Seq(
+        libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.12", scalacOptions := Seq("-deprecation"),
+        compile in Compile <<= (compile in Compile).dependsOn(Def.task { 
+          println("\nAbout to extract call graph while compiling...\n") 
+        })
+      )
+) dependsOn(grapher)
 }

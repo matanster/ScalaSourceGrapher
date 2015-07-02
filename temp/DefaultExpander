@@ -1,0 +1,5 @@
+{
+  "name" : "DefaultExpander",
+  "type" : "object",
+  "methods" : [ "foo", "apply" ]
+}
