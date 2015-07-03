@@ -7,12 +7,12 @@ import java.nio.charset.StandardCharsets
 import play.api.libs.json._
 
 object util {  
-  def writeOutputFile(fileText: String, fileName: String, outDir: String = "temp") {
+  def writeOutputFile(fileText: String, fileName: String, outDir: String = "out") {
     //println(Paths.get(outDir + "/" + fileName))
     Files.write(Paths.get(outDir + "/" + fileName), fileText.getBytes(StandardCharsets.UTF_8))
   }
   
-  def writeJsonFile(json: JsValue, fileName: String, outDir: String = "temp") {
+  def writeJsonFile(json: JsValue, fileName: String, outDir: String = "out") {
     writeOutputFile(Json.prettyPrint(json) + "\n", fileName, outDir) // https://www.playframework.com/documentation/2.1.1/ScalaJson
   }
   

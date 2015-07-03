@@ -2,7 +2,7 @@ SBT project which uses [macro paradise](http://docs.scala-lang.org/overviews/mac
 
 In this working prototype, the scala project to produce data for, is simply a project contained within this repo.
 
- Usage: `sbt run`.
+ Usage: `sbt run`. Create a subdirectory named "out" before running.
  
  Development: 
  Use `~ ;clean ;run` if you work on the code

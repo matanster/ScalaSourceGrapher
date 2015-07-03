@@ -33,9 +33,13 @@ object Macros {
       // TODO: need to further hone the quasiquote for capturing only and all cases of method application, *along* the object they are applied to.
       case x@q"$obj $f" => 
 
-        val calleeOwnerType = new model.ModelType(name = obj.tpe.typeSymbol.toString, typeType = "unknown")
+        val calleeOwner  = new model.ModelType(name = obj.tpe.typeSymbol.name.toString, 
+                                               typeType = obj.tpe.typeSymbol.toString().split(" ").head) 
+
         val calleeMethod = new model.Method(f.toString)
-        val callee = new model.OwnedMethod(calleeOwnerType, calleeMethod)
+        
+        val callee = new model.OwnedMethod(calleeOwner, calleeMethod)
+        
         selfOwnerType.applies = selfOwnerType.applies :+ callee
       
         //println(typeNameAsString + " calls " + BLUE + BOLD + f + RESET + " on object " + obj + " of type " + CYAN_B + obj.tpe.typeSymbol + RESET)
@@ -43,15 +47,16 @@ object Macros {
       case x => 
     }
     
-    val selfOwnerTypeJson = Json.toJson(Map("name" -> toJson(selfOwnerType.name),
-                                        "type" -> toJson(selfOwnerType.typeType),
-                                        "applies" -> toJson(selfOwnerType.applies map { 
-                                          ownedMethod => Json.obj("method"    -> toJson(ownedMethod.method.name), 
-                                                                  "ownerName" -> toJson(ownedMethod.methodTypeOwner.name)
-                                                                  //"ownerType" -> toJson(ownedMethod.methodTypeOwner.typeType)
-                                                                  )})))
+    val selfOwnerTypeJson = Json.toJson(Map("name"   -> toJson(selfOwnerType.name),
+                                            "type"   -> toJson(selfOwnerType.typeType),
+                                            "method" -> toJson(ExprToString(methodName)),
+                                            "applies" -> toJson(selfOwnerType.applies map { 
+                                               ownedMethod => Json.obj("method"    -> toJson(ownedMethod.method.name), 
+                                                                       "ownerName" -> toJson(ownedMethod.methodTypeOwner.name),
+                                                                       "ownerType" -> toJson(ownedMethod.methodTypeOwner.typeType)
+                                                                      )})))
     
-    println(Json.prettyPrint(selfOwnerTypeJson))
+    println("Type applies: " + Json.prettyPrint(selfOwnerTypeJson))
     writeJsonFile(selfOwnerTypeJson, selfOwnerType.name + "-applies")
     
   }

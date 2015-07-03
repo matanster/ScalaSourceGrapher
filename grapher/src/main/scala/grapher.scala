@@ -16,10 +16,7 @@ import play.api.libs.json._
 import play.api.libs.json.Json._
 import fileUtil.util._
 
-// example for object that can host stuff that needs to run once, if referenced in the annotation macro object
-object init {
-  println("Intialized!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-}
+object init {} // object that may host stuff that needs to run once, if referenced in the annotation macro object
 
 // bind the annotation macro
 class AN extends StaticAnnotation {
@@ -49,11 +46,10 @@ object analyze {
        
       val wrapped: List[c.Tree] = body map {
         case x@q"$mods def $tname[..$tparams](...$paramss): $tpt = $expr" => {
+          //println(CYAN_B + s"$typ $name" + RESET + " has method " + BLUE + BOLD + tname + RESET)
           
           val method = new model.Method(tname.toString)
           modelType.methods = modelType.methods :+ method
-          
-          //println(CYAN_B + s"$typ $name" + RESET + " has method " + BLUE + BOLD + tname + RESET)
          
           //
           // replace the method with a macro that gets the method's AST as its argument.
@@ -67,14 +63,13 @@ object analyze {
         case x => x
       }
       
-      //println(modelType)
       val modelTypeJson = Json.toJson(Map("name" -> toJson(modelType.name),
                                           "type" -> toJson(modelType.typeType),
                                           "methods" -> toJson(modelType.methods map { method => toJson(method.name) })
           )          
       )
       
-      //println(Json.prettyPrint(modelTypeJson))
+      println("Type: " + Json.prettyPrint(modelTypeJson))
       writeJsonFile(modelTypeJson, modelType.name + "-methods")
      
       wrapped

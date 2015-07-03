@@ -1,7 +1,5 @@
 package model
 
-//import play.api.libs.json
-
 case class Method(val name: String)
 
 case class ModelType(val name: String,

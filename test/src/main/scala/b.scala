@@ -17,6 +17,8 @@ import grapher.Macros._
   }
   println("class B has runnnn")
   doB
+  
+  @AN class C {}
 }
 
 @AN 
