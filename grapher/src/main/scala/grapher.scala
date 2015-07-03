@@ -17,8 +17,7 @@ import play.api.libs.json.Json._
 import fileUtil.util._
 
 // example for object that can host stuff that needs to run once, if referenced in the annotation macro object
-object Types {
-  var types: Seq[model.Type] = Seq()
+object init {
   println("Intialized!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 }
 
@@ -46,7 +45,7 @@ object analyze {
     val returnIdentity = c.Expr[Any](Block(annottees.map(_.tree).toList, Literal(Constant(())))) // return expression that duplicates the original annottees (from https://github.com/scalamacros/paradise/blob/5e5f0c129dd1861f86250d7ce94635b89996938c/tests/src/main/scala/identity.scala#L8)
 
     // augment input AST with method wrappers
-    def wrapMethods(typ: String, name: Any, body: List[c.Tree], modelType: model.Type): List[c.Tree] = {
+    def wrapMethods(body: List[c.Tree], modelType: model.ModelType): List[c.Tree] = {
        
       val wrapped: List[c.Tree] = body map {
         case x@q"$mods def $tname[..$tparams](...$paramss): $tpt = $expr" => {
@@ -62,25 +61,21 @@ object analyze {
           // after the macro analyzes the code, it will re-expand the method's AST so that it runs as intended.
           //
 
-          val nameAsString = name.toString
-          
           import grapher.Macros._
-          q"$mods def $tname[..$tparams](...$paramss): $tpt = macroWrapper($nameAsString, $expr)"
+          q"$mods def $tname[..$tparams](...$paramss): $tpt = macroWrapper(${modelType.name}, ${modelType.typeType}, ${tname.toString}, $expr)"
         }
         case x => x
       }
       
       //println(modelType)
       val modelTypeJson = Json.toJson(Map("name" -> toJson(modelType.name),
-                                          "type" -> toJson(modelType.singleton match {
-                                                      case true  => "object"
-                                                      case false => "class"}),
+                                          "type" -> toJson(modelType.typeType),
                                           "methods" -> toJson(modelType.methods map { method => toJson(method.name) })
           )          
       )
       
       //println(Json.prettyPrint(modelTypeJson))
-      writeJsonFile(modelTypeJson, modelType.name)
+      writeJsonFile(modelTypeJson, modelType.name + "-methods")
      
       wrapped
     }
@@ -89,16 +84,16 @@ object analyze {
     annottees.map(_.tree).toList match {
       
       case x@q"$mods object $name extends { ..$earlydefns } with ..$parents { $self => ..$body }" :: Nil =>
-        val modelType = new model.Type(name = name.toString(), singleton = true)
+        val modelType = new model.ModelType(name = name.toString(), typeType = "object")
         //println(s"found object ${modelType.name}")
-        val wrappedMethods = wrapMethods("object", name, body, modelType)
+        val wrappedMethods = wrapMethods(body, modelType)
         c.Expr[Any](q"$mods object $name extends { ..$earlydefns } with ..$parents { $self => ..$wrappedMethods }")
         
       case x@q"$mods class $name[..$tparams] $ctorMods(...$paramss) extends { ..$earlydefns } with ..$parents { $self => ..$body }" :: Nil =>
-        val modelType = new model.Type(name = name.toString())
+        val modelType = new model.ModelType(name = name.toString(), typeType = "class")
         //println(s"found object ${modelType.name}")
         //println(s"found class $name")
-        val wrappedMethods = wrapMethods("class", name, body, modelType)
+        val wrappedMethods = wrapMethods(body, modelType)
         c.Expr[Any](q"$mods class $name[..$tparams] $ctorMods(...$paramss) extends { ..$earlydefns } with ..$parents { $self => ..$wrappedMethods }")
           
       case x@q"import $ref.{..$sels}" => 

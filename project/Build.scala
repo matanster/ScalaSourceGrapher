@@ -60,7 +60,7 @@ object MyBuild extends Build {
       libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.1",
       libraryDependencies += "org.apache.commons" % "commons-io" % "1.3.2"
     )
-  )
+  ) dependsOn(util)
 
   lazy val grapher: Project = Project(
     "grapher",

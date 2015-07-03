@@ -1,0 +1,98 @@
+{
+  "name" : "DefaultExpander",
+  "type" : "object",
+  "applies" : [ {
+    "method" : "Console",
+    "ownerName" : "package scala"
+  }, {
+    "method" : "foo",
+    "ownerName" : "object DefaultExpander"
+  }, {
+    "method" : "<init>",
+    "ownerName" : "class A"
+  }, {
+    "method" : "doA",
+    "ownerName" : "class A"
+  }, {
+    "method" : "<init>",
+    "ownerName" : "class B"
+  }, {
+    "method" : "doB",
+    "ownerName" : "class B"
+  }, {
+    "method" : "mkString",
+    "ownerName" : "trait Seq"
+  }, {
+    "method" : "map",
+    "ownerName" : "trait Seq"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "getObjectName",
+    "ownerName" : "object Util"
+  }, {
+    "method" : "canBuildFrom",
+    "ownerName" : "object Seq"
+  }, {
+    "method" : "Seq",
+    "ownerName" : "package collection"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  }, {
+    "method" : "$plus",
+    "ownerName" : "class String"
+  } ]
+}
